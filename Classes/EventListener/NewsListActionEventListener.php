@@ -44,10 +44,9 @@ class NewsListActionEventListener
                 $search->setSplitSubjectWords((bool)$settings['search']['splitSearchWord']);
 
                 $demand = $this->createDemandObjectFromSettings($settings, Demand::class);
-                $demand->setStoragePage(Page::extendPidListByChildren($settings['startingpoint'], $settings['recursive']));
-                $demand->setCategories(explode(',', $settings['categories']));
 
                 $demand->setSearch($search);
+
                 $demand->setFilteredCategories($search->getFilteredCategories());
                 $demand->setFilteredTags($search->getFilteredTags());
                 $demand->setFromDate($search->getFromDate());
@@ -55,6 +54,9 @@ class NewsListActionEventListener
 
                 $newsRepository = $this->objectManager->get(NewsRepository::class);
                 $newsItems = $newsRepository->findDemanded($demand);
+
+                $data['demand'] = $demand;
+                $data['news']  = $newsItems;
             }
 
             $extended = [
@@ -167,8 +169,8 @@ class NewsListActionEventListener
         $demand->setMonth((int)$settings['month']);
         $demand->setYear((int)$settings['year']);
 
-        $demand->setStoragePage(Page::extendPidListByChildren($settings['startingpoint'],
-            $settings['recursive']));
+        $demand->setStoragePage(Page::extendPidListByChildren($settings['startingpoint'], $settings['recursive']));
+
         return $demand;
     }
 }
